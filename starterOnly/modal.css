@@ -546,7 +546,11 @@ footer {
 }
 
 .confirmation .button {
-  margin-top: 20px;
+  margin-top: 229px;
+}
+
+.confirmation p {
+  margin-top: 150px;
 }
 
 
