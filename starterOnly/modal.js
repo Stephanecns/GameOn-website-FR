@@ -1,3 +1,4 @@
+// Fonction pour la navigation (existant)
 function editNav() {
   var x = document.getElementById("myTopnav");
   if (x.className === "topnav") {
@@ -8,136 +9,170 @@ function editNav() {
 }
 
 // DOM Elements
-const modalbg = document.querySelector(".bground");
-const modalBtn = document.querySelectorAll(".modal-btn");
-const formData = document.querySelectorAll(".formData");
+const modalbg = document.querySelector(".bground"); // Sélectionne l'arrière-plan de la modale
+const modalBtn = document.querySelectorAll(".modal-btn"); // Sélectionne tous les boutons pour ouvrir la modale
+const formData = document.querySelectorAll(".formData"); // Sélectionne tous les éléments de formulaire
 
-// launch modal event
+// Ajouter des écouteurs d'événements à chaque bouton pour ouvrir la modale
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 
-// launch modal form
+// Fonction pour ouvrir la modale
 function launchModal() {
-  modalbg.style.display = "block";
+  form.reset(); // Réinitialiser les champs du formulaire
+  clearErrors(); // Effacer les erreurs précédentes
+  form.style.display = "block"; // Afficher le formulaire
+  confirmation.classList.add("invisible"); // Masquer le message de confirmation
+  modalbg.style.display = "block"; // Afficher la modale
 }
 
-//Issue 1
-//Je sélectionne et je stocke la DIV span close
-const modalClose = document.querySelector(".close");
-//J'ajoute un écouteur d'évènement afin de répérer quand le bouton a été cliqué.
-modalClose.addEventListener("click", function () {
-  console.log("icone cliquée");
-  //Je fais disparaitre la fenetre modale au clic sur l'icone
-  modalbg.style.display = "none";
-});
-
-// 1 - Je sélectionne et stocke tous les éléments nécessaires
-const form = document.querySelector("form");
-const firstName = document.getElementById("firstNameUser");
-const lastName = document.getElementById("lastNameUser");
-const email = document.getElementById("emailUser");
-const birthdate = document.getElementById("birthdateUser");
-const numContests = document.getElementById("quantityGameparticipated");
-const termsCheckbox = document.getElementById("checkbox1");
-const radios = document.querySelectorAll('[name="location"]');
-const titre = document.querySelector(".modal-body");
-const confirmation = document.querySelector(".confirmation");
-const modalcloseBtn = document.querySelector(".close-confirmation");
-
+// Sélectionne et stocke les éléments nécessaires pour le formulaire et les autres parties
+const form = document.querySelector("form"); // Sélectionne le formulaire
+const firstName = document.getElementById("firstNameUser"); // Sélectionne le champ prénom
+const lastName = document.getElementById("lastNameUser"); // Sélectionne le champ nom
+const email = document.getElementById("emailUser"); // Sélectionne le champ email
+const birthdate = document.getElementById("birthdateUser"); // Sélectionne le champ date de naissance
+const numContests = document.getElementById("quantityGameparticipated"); // Sélectionne le champ nombre de concours
+const termsCheckbox = document.getElementById("checkbox1"); // Sélectionne la case à cocher des conditions
+const radios = document.querySelectorAll('[name="location"]'); // Sélectionne les boutons radio pour la localisation
+const confirmation = document.querySelector(".confirmation"); // Sélectionne le message de confirmation
+const modalcloseBtn = document.querySelector(".close-confirmation"); // Sélectionne le bouton de fermeture de la confirmation
 
 // Fonction pour fermer la modale
 function closeModal() {
-  modalbg.style.display = "none";
+  modalbg.style.display = "none"; // Masquer la modale
 }
 
-// Détection du clic du bouton 'fermer' 
-modalcloseBtn.addEventListener("click", function () {
-  console.log("icone cliquée");
-  closeModal();
+// Détection du clic sur l'icône de fermeture de la modale
+const modalClose = document.querySelector(".close"); // Sélectionne l'icône de fermeture de la modale
+modalClose.addEventListener("click", function () {
+  console.log("icône cliquée");
+  closeModal(); // Appeler la fonction pour fermer la modale
 });
 
+// Détection du clic sur le bouton de fermeture de la confirmation
+modalcloseBtn.addEventListener("click", function () {
+  console.log("bouton de fermeture cliqué");
+  closeModal(); // Appeler la fonction pour fermer la modale
+});
 
+// Fonction pour valider le prénom et le nom avec regex
+function validateName(input) {
+  const namePattern = /^[A-Za-z-]+$/; // Regex pour accepter uniquement les lettres et les tirets
+  if (!namePattern.test(input.value) || input.value.trim().length < 2) {
+    input.nextElementSibling.classList.remove("invisible"); // Afficher le message d'erreur
+    return false;
+  } else {
+    input.nextElementSibling.classList.add("invisible"); // Masquer le message d'erreur
+    return true;
+  }
+}
 
-// Je détecte la validation du formulaire + trim permet de prendre une valeur sans espacements
+// Fonction pour valider l'email avec regex
+function validateEmail(input) {
+  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; // Regex pour valider le format email
+  if (!emailPattern.test(input.value.trim())) {
+    input.nextElementSibling.classList.remove("invisible"); // Afficher le message d'erreur
+    return false;
+  } else {
+    input.nextElementSibling.classList.add("invisible"); // Masquer le message d'erreur
+    return true;
+  }
+}
+
+// Fonction pour valider la date de naissance
+function validateBirthdate(input) {
+  if (input.value.trim() === "") {
+    input.nextElementSibling.classList.remove("invisible"); // Afficher le message d'erreur
+    return false;
+  } else {
+    input.nextElementSibling.classList.add("invisible"); // Masquer le message d'erreur
+    return true;
+  }
+}
+
+// Fonction pour valider le nombre de tournois
+function validateNumContests(input) {
+  const numValue = input.value.trim();
+  if (numValue === "" || isNaN(numValue) || numValue < 0 || numValue > 99) {
+    input.nextElementSibling.classList.remove("invisible"); // Afficher le message d'erreur
+    return false;
+  } else {
+    input.nextElementSibling.classList.add("invisible"); // Masquer le message d'erreur
+    return true;
+  }
+}
+
+// Fonction pour valider la sélection d'une localisation
+function validateLocation() {
+  const selectedLocation = document.querySelector('input[name="location"]:checked');
+  if (!selectedLocation) {
+    radios[0].closest(".formData").querySelector(".error").classList.remove("invisible"); // Afficher le message d'erreur
+    return false;
+  } else {
+    radios[0].closest(".formData").querySelector(".error").classList.add("invisible"); // Masquer le message d'erreur
+    return true;
+  }
+}
+
+// Fonction pour valider l'acceptation des conditions
+function validateTerms() {
+  if (!termsCheckbox.checked) {
+    termsCheckbox.closest(".formData").querySelector(".error").classList.remove("invisible"); // Afficher le message d'erreur
+    return false;
+  } else {
+    termsCheckbox.closest(".formData").querySelector(".error").classList.add("invisible"); // Masquer le message d'erreur
+    return true;
+  }
+}
+
+// Ajout des écouteurs d'événements pour les champs de formulaire pour validation en temps réel
+firstName.addEventListener('input', function() {
+  validateName(this); // Valider le prénom à chaque entrée
+});
+
+lastName.addEventListener('input', function() {
+  validateName(this); // Valider le nom à chaque entrée
+});
+
+email.addEventListener('input', function() {
+  validateEmail(this); // Valider l'email à chaque entrée
+});
+
+birthdate.addEventListener('input', function() {
+  validateBirthdate(this); // Valider la date de naissance à chaque entrée
+});
+
+numContests.addEventListener('input', function() {
+  validateNumContests(this); // Valider le nombre de tournois à chaque entrée
+});
+
+// Fonction pour effacer les messages d'erreur
+function clearErrors() {
+  const errors = document.querySelectorAll(".error");
+  errors.forEach((error) => {
+    error.classList.add("invisible"); // Masquer tous les messages d'erreur
+  });
+}
+
+// Détection de la validation du formulaire + trim permet de prendre une valeur sans espacements
 form.addEventListener("submit", function (e) {
-  e.preventDefault();
+  e.preventDefault(); // Empêcher l'envoi par défaut du formulaire
   console.log("formulaire envoyé");
 
-  //Je récupère les valeurs de chacun des inputs
-  const firstNameValue = firstName.value.trim();
-  console.log("Prénom:", firstNameValue);
-  const lastNameValue = lastName.value.trim();
-  console.log("Nom:", lastNameValue);
-  const emailValue = email.value.trim();
-  const birthdateValue = birthdate.value.trim();
-  console.log("Date de naissance:", birthdateValue);
-  console.log("Email:", emailValue);
-  const numContestsValue = numContests.value.trim();
-  console.log("Nombre de concours:", numContestsValue);
-  // La propriété 'checked' retourne 'true' si la case est cochée, et 'false' sinon.
-  const termsChecked = termsCheckbox.checked;
-  console.log("Conditions générales acceptées:", termsChecked);
-  // Récupère la valeur du bouton radio sélectionné pour le champ 'location'. Si aucun bouton n'est sélectionné, 'Aucune sélection' est enregistré.
-  const selectedLocation = document.querySelector(
-    'input[name="location"]:checked'
-  );
-  console.log(
-    "Location choisie:",
-    selectedLocation ? selectedLocation.value : "Aucune sélection"
-  );
-
-  // Fonction qui permet de vérifier si le mail contient @ et un .
-  function validEmail(email) {
-    return email.includes("@") && email.includes(".");
-  }
-
-  // Parcours toutes les classes comprenant .error + Masque tous les messages d'erreur avant de valider le formulaire
-  function clearErrors() {
-    const errors = document.querySelectorAll(".error");
-    errors.forEach((error) => {
-      error.classList.add("invisible");
-    });
-  }
-  // Appel de clearErrors pour masquer les erreurs précédentes
+  // Effacer les erreurs précédentes
   clearErrors();
 
-  // Vérification des champs de texte individuels (prénom, nom, email)
-  // Ces champs ont une structure simple où le message d'erreur est directement
-  // après l'élément d'entrée. Utilisation de nextElementSibling pour accéder au message d'erreur.
-  // Je vérifie les informations de l'utilisateur
-  if (firstNameValue.length < 2) {
-    firstName.nextElementSibling.classList.remove("invisible");
-  } else if (lastNameValue.length < 2) {
-    lastName.nextElementSibling.classList.remove("invisible");
-  } else if (!validEmail(emailValue)) {
-    console.log("erreur email");
-    email.nextElementSibling.classList.remove("invisible");
-  } else if (birthdateValue === "") {
-    birthdate.nextElementSibling.classList.remove("invisible");
-  } else if (
-    numContestsValue === "" ||
-    isNaN(numContestsValue) ||
-    numContestsValue < 0 ||
-    numContestsValue > 99
-  ) {
-    console.log("erreur nombre de concours");
-    numContests.nextElementSibling.classList.remove("invisible");
-  } else if (!selectedLocation) {
-    // Vérification de la localisation sélectionnée
-    // Les boutons radio et les cases à cocher partagent un message d'erreur commun.
-    // Utilisation de closest pour trouver le parent formData et querySelector pour trouver
-    // le message d'erreur à l'intérieur de ce parent.
-    console.log("erreur location");
-    radios[0]
-      .closest(".formData")
-      .querySelector(".error")
-      .classList.remove("invisible");
-  } else if (!termsChecked) {
-    console.log("erreur conditions");
-    termsCheckbox
-      .closest(".formData")
-      .querySelector(".error")
-      .classList.remove("invisible");
-  } else {
+  // Valider les champs de texte individuels (prénom, nom, email, etc.)
+  let isValid = true;
+  isValid = validateName(firstName) && isValid; // Valider le prénom
+  isValid = validateName(lastName) && isValid; // Valider le nom
+  isValid = validateEmail(email) && isValid; // Valider l'email
+  isValid = validateBirthdate(birthdate) && isValid; // Valider la date de naissance
+  isValid = validateNumContests(numContests) && isValid; // Valider le nombre de tournois
+  isValid = validateLocation() && isValid; // Valider la localisation
+  isValid = validateTerms() && isValid; // Valider l'acceptation des conditions
+
+  if (isValid) {
     console.log("succès");
     form.style.display = "none"; // Masquer le formulaire
     confirmation.classList.remove("invisible"); // Afficher le message de confirmation
